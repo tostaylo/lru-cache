@@ -1,20 +1,28 @@
 const db = require('./config/connection');
 const LRU = require('lru-cache');
-const options = {
-	max: 2,
-};
-const cache = new LRU(options);
 const { User } = require('./models');
 const countries = ['Armenia', 'Afghanistan', 'Romania'];
-const users = [];
+const cache = new LRU({
+	max: 2,
+});
+const iterations = 10000;
 
 (async function () {
-	await withCache();
+	// warmup
+	await timer(withoutCache, 'Warmup without cache');
+
+	// real deal
+	await timer(withCache, 'With Cache');
+	await timer(withoutCache, 'Without Cache');
+
+	process.exit(0);
 })();
 
 async function withCache() {
-	for (let i = 0; i < 1000; i++) {
-		const country = countries[i % 3];
+	const users = [];
+
+	for (let i = 0; i < iterations; i++) {
+		const country = countries[Math.floor(Math.random() * countries.length)];
 		const userFromCache = cache.get(country);
 
 		if (userFromCache) {
@@ -27,4 +35,23 @@ async function withCache() {
 	}
 
 	return users;
+}
+
+async function withoutCache() {
+	const users = [];
+
+	for (let i = 0; i < iterations; i++) {
+		const country = countries[Math.floor(Math.random() * countries.length)];
+		const userFromDb = await User.findOne({ country });
+		users.push(userFromDb);
+	}
+
+	return users;
+}
+
+async function timer(fn, id) {
+	let start = process.hrtime();
+	await fn();
+	let stop = process.hrtime(start);
+	console.log(`${id} execution time: ${(stop[0] * 1e9 + stop[1]) / 1e9} seconds`);
 }
