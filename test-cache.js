@@ -5,7 +5,7 @@ const countries = ['Armenia', 'Afghanistan', 'Romania'];
 const cache = new LRU({
 	max: 2,
 });
-const iterations = 10000;
+const iterations = 50000;
 
 (async function () {
 	// warmup
@@ -51,7 +51,10 @@ async function withoutCache() {
 
 async function timer(fn, id) {
 	let start = process.hrtime();
+
 	await fn();
+
 	let stop = process.hrtime(start);
+
 	console.log(`${id} execution time: ${(stop[0] * 1e9 + stop[1]) / 1e9} seconds`);
 }
