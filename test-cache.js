@@ -4,7 +4,7 @@ const { User } = require('./models');
 
 const countries = ['Armenia', 'Afghanistan', 'Romania', 'Greece', 'Tunisia', 'Hong Kong'];
 const cache = new LRU({
-	max: 6,
+	max: countries.length,
 });
 const iterations = 50000;
 let hits = 0;
