@@ -7,7 +7,6 @@ const cache = new LRU({
 	max: countries.length,
 });
 const iterations = 50000;
-let hits = 0;
 
 (async function () {
 	// warmup
@@ -15,8 +14,6 @@ let hits = 0;
 
 	// real deal
 	await timer(withCache, 'With Cache');
-	console.log(`${hits} cache hits out of ${iterations} attempts \n`);
-
 	await timer(withoutCache, 'Without Cache');
 
 	process.exit(0);
@@ -24,6 +21,7 @@ let hits = 0;
 
 async function withCache() {
 	const users = [];
+	let hits = 0;
 
 	for (let i = 0; i < iterations; i++) {
 		const country = countries[Math.floor(Math.random() * countries.length)];
@@ -43,6 +41,8 @@ async function withCache() {
 			}
 		}
 	}
+
+	console.log(`${hits} cache hits out of ${iterations} attempts \n`);
 
 	return users;
 }
