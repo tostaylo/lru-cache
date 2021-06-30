@@ -7,7 +7,7 @@ const cache = new LRU({
 	max: 6,
 });
 const iterations = 50000;
-let misses = 0;
+let hits = 0;
 
 (async function () {
 	// warmup
@@ -15,7 +15,7 @@ let misses = 0;
 
 	// real deal
 	await timer(withCache, 'With Cache');
-	console.log(`${iterations - misses} cache hits out of ${iterations} attempts \n`);
+	console.log(`${hits} cache hits out of ${iterations} attempts \n`);
 
 	await timer(withoutCache, 'Without Cache');
 
@@ -31,13 +31,13 @@ async function withCache() {
 
 		if (userFromCache) {
 			users.push(userFromCache);
+			hits++;
 		} else {
 			const userFromDb = await User.findOne({ country });
 
 			if (userFromDb) {
 				cache.set(country, userFromDb);
 				users.push(userFromDb);
-				misses++;
 			} else {
 				console.log(`No user with a country of ${country}`);
 			}
