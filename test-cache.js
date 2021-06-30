@@ -11,7 +11,7 @@ let misses = 0;
 
 (async function () {
 	// warmup
-	await timer(withoutCache, 'Warmup without cache');
+	await timer(withoutCache, 'Warmup Without Cache');
 
 	// real deal
 	await timer(withCache, 'With Cache');
@@ -71,5 +71,5 @@ async function timer(fn, id) {
 
 	let stop = process.hrtime(start);
 
-	console.log(`${id} execution time: ${(stop[0] * 1e9 + stop[1]) / 1e9} seconds\n`);
+	console.log(`${id} --- Execution time: ${(stop[0] * 1e9 + stop[1]) / 1e9} seconds\n`);
 }
